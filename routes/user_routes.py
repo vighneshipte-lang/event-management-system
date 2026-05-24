@@ -13,49 +13,15 @@ from models.schedule_model import Schedule
 user = Blueprint("user", __name__)
 
 
-@user.route('/user-dashboard')
+@user.route("/user/dashboard")
 @login_required
 def user_dashboard():
-    if current_user.role != 'user':
+
+    if current_user.role != "user":
         return "Access Denied"
 
-    # Search and Filter functionality
-    search = request.args.get('search')
-    event_type = request.args.get('event_type')
-    
-    query = Event.query.filter_by(status='approved')
+    return render_template("user_dashboard.html")
 
-    if search:
-        query = query.filter(Event.title.ilike(f'%{search}%'))
-    if event_type and event_type != 'all':
-        query = query.filter_by(event_type=event_type)
-
-    events = query.all()
-
-    # Dictionaries to hold extra data for the template
-    organizer_ratings = {}
-    has_schedule = {}
-
-    for event in events:
-        # 1. Check if a schedule has been added for this event
-        schedule_exists = Schedule.query.filter_by(event_id=event.id).first()
-        has_schedule[event.id] = True if schedule_exists else False
-
-        # 2. Calculate the average rating for this event's organizer
-        if event.organizer_id not in organizer_ratings:
-            ratings = Rating.query.filter_by(organizer_id=event.organizer_id).all()
-            if ratings:
-                avg = sum(r.rating for r in ratings) / len(ratings)
-                organizer_ratings[event.organizer_id] = round(avg, 1)
-            else:
-                organizer_ratings[event.organizer_id] = "No ratings yet"
-
-    return render_template(
-        'user_dashboard.html',
-        events=events,
-        organizer_ratings=organizer_ratings,
-        has_schedule=has_schedule
-    )
 
 @user.route('/view-events')
 @login_required
