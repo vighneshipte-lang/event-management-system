@@ -9,18 +9,42 @@ from models.notification_model import Notification
 from models.event_category_model import EventCategory
 from models.team_model import Team
 from models.schedule_model import Schedule
+from datetime import datetime
 
 user = Blueprint("user", __name__)
 
 
-@user.route("/user/dashboard")
+@user.route('/user-dashboard')
 @login_required
 def user_dashboard():
 
-    if current_user.role != "user":
+    if current_user.role != 'user':
         return "Access Denied"
 
-    return render_template("user_dashboard.html")
+    today = datetime.today().date()
+
+    ongoing_events = Event.query.filter(
+        Event.start_date <= today,
+        Event.end_date >= today
+    ).all()
+
+    upcoming_events = Event.query.filter(
+        Event.start_date > today
+    ).all()
+
+    notifications = Notification.query.all()
+
+    participations = Participation.query.filter_by(
+        user_id=current_user.id
+    ).all()
+
+    return render_template(
+        'user_dashboard.html',
+        ongoing_events=ongoing_events,
+        upcoming_events=upcoming_events,
+        notifications=notifications,
+        participations=participations
+    )
 
 
 @user.route('/view-events')
