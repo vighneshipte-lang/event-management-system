@@ -1,0 +1,27 @@
+<h2>Organizer Ratings</h2>
+
+{% if ratings %}
+
+    {% for rating in ratings %}
+
+        <div>
+
+            <strong>Rating:</strong>
+            {{ rating.rating }}/5
+
+            <br>
+
+            <strong>Review:</strong>
+            {{ rating.review }}
+
+        </div>
+
+        <hr>
+
+    {% endfor %}
+
+{% else %}
+
+<p>No ratings available.</p>
+
+{% endif %}

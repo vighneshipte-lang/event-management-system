@@ -10,6 +10,7 @@ from models.event_category_model import EventCategory
 from models.team_model import Team
 from models.schedule_model import Schedule
 from datetime import datetime
+from models.performer_model import Performer
 
 user = Blueprint("user", __name__)
 
@@ -77,6 +78,65 @@ def view_events():
         'view_events.html',
         events=events
     )
+
+@user.route('/event-details/<int:event_id>')
+@login_required
+def event_details(event_id):
+
+    event = Event.query.get_or_404(event_id)
+
+    categories = EventCategory.query.filter_by(
+        event_id=event.id
+    ).all()
+
+    schedules = Schedule.query.filter_by(
+        event_id=event.id
+    ).order_by(
+        Schedule.event_day,
+        Schedule.start_time
+    ).all()
+
+    performers = Performer.query.filter_by(
+        event_id=event.id
+    ).all()
+
+    ratings = Rating.query.filter_by(
+        organizer_id=event.organizer_id
+    ).all()
+
+    average_rating = 0
+
+    if ratings:
+
+        average_rating = round(
+            sum(r.rating for r in ratings) / len(ratings),
+            1
+        )
+
+    return render_template(
+        'event_details.html',
+        event=event,
+        categories=categories,
+        schedules=schedules,
+        performers=performers,
+        ratings=ratings,
+        average_rating=average_rating
+    )
+
+
+@user.route('/organizer-ratings/<int:organizer_id>')
+@login_required
+def organizer_ratings(organizer_id):
+
+    ratings = Rating.query.filter_by(
+        organizer_id=organizer_id
+    ).all()
+
+    return render_template(
+        'organizer_ratings.html',
+        ratings=ratings
+    )
+
 
 
 @user.route("/join-event/<int:event_id>")
@@ -175,14 +235,12 @@ def rate_organizer(event_id):
     return render_template("rate_organizer.html", event=event)
 
 
-@user.route('/report-organizer/<int:event_id>', methods=['GET', 'POST'])
+@user.route('/report-organizer/<int:organizer_id>', methods=['GET', 'POST'])
 @login_required
-def report_organizer(event_id):
+def report_organizer(organizer_id):
 
     if current_user.role != 'user':
         return "Access Denied"
-
-    event = Event.query.get_or_404(event_id)
 
     if request.method == 'POST':
 
@@ -190,8 +248,7 @@ def report_organizer(event_id):
 
         complaint = Complaint(
             user_id=current_user.id,
-            organizer_id=event.organizer_id,
-            event_id=event.id,
+            organizer_id=organizer_id,
             complaint_text=complaint_text
         )
 
@@ -199,13 +256,18 @@ def report_organizer(event_id):
 
         db.session.commit()
 
-        flash('Complaint submitted successfully!', 'success')
+        flash(
+            'Complaint submitted successfully!',
+            'success'
+        )
 
-        return redirect(url_for('user.my_participations'))
+        return redirect(
+            url_for('user.user_dashboard')
+        )
 
     return render_template(
         'report_organizer.html',
-        event=event
+        organizer_id=organizer_id
     )
 
 @user.route('/notifications')

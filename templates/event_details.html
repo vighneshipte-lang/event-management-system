@@ -1,0 +1,123 @@
+<h2>{{ event.title }}</h2>
+
+<p>{{ event.description }}</p>
+
+<p>
+  <strong>Venue:</strong>
+  {{ event.venue }}
+</p>
+
+<p>
+  <strong>Date:</strong>
+  {{ event.start_date }} to {{ event.end_date }}
+</p>
+<hr />
+
+<h3>Performers</h3>
+
+{% if performers %} {% for performer in performers %}
+
+<div class="card mb-3">
+  <div class="card-body">
+    <h5>{{ performer.performer_name }}</h5>
+
+    <p>
+      <strong>Performance:</strong>
+      {{ performer.performance_title }}
+    </p>
+
+    <p>
+      <strong>Time:</strong>
+      {{ performer.performance_time }}
+    </p>
+
+    <p>{{ performer.description }}</p>
+  </div>
+</div>
+
+{% endfor %} {% else %}
+
+<div class="alert alert-warning">No performers available.</div>
+
+{% endif %}
+<hr />
+
+<h3>Categories</h3>
+
+{% if categories %}
+
+<ul>
+  {% for category in categories %}
+
+  <li>
+    <strong>{{ category.category_name }}</strong>
+
+    <br />
+
+    Registration Type: {{ category.registration_type }}
+
+    <br />
+
+    Prize: ₹ {{ category.prize_amount }}
+
+    <br /><br />
+
+    {% if category.registration_type == 'solo' %}
+
+    <a
+      href="{{ url_for('user.join_category', category_id=category.id) }}"
+      class="btn btn-primary btn-sm"
+    >
+      Register Solo
+    </a>
+
+    {% else %}
+
+    <a
+      href="{{ url_for('user.create_team', category_id=category.id) }}"
+      class="btn btn-success btn-sm"
+    >
+      Register Team
+    </a>
+
+    {% endif %}
+  </li>
+  <hr />
+
+  <h4>Organizer Rating</h4>
+
+  <h5>⭐ {{ average_rating }}/5</h5>
+
+  <br />
+
+  {% endfor %}
+</ul>
+
+{% else %}
+
+<p>No categories available.</p>
+
+{% endif %}
+
+<hr />
+
+<h3>Schedule</h3>
+
+{% if schedules %}
+
+<ul>
+  {% for schedule in schedules %}
+
+  <li>
+    {{ schedule.participant_name }} - {{ schedule.stage_name }} - {{
+    schedule.event_day }} - {{ schedule.start_time }} to {{ schedule.end_time }}
+  </li>
+
+  {% endfor %}
+</ul>
+
+{% else %}
+
+<p>No schedule available.</p>
+
+{% endif %}
