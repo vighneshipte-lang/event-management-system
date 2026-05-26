@@ -1,83 +1,239 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Participations</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff; /* Strictly white */
+        }
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div class="container mt-5">
-      <h2>My Participations</h2>
+        body {
+            background: linear-gradient(to bottom, #060b26 0%, #3b0a6b 35%, #8a2387 65%, #ffffff 100%);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            min-height: 100vh;
+            position: relative;
+        }
 
-      {% if participations %}
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.95);
+            pointer-events: none;
+            z-index: 1;
+        }
 
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Event ID</th>
+        .table-container {
+            background: rgba(22, 22, 37, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 1000px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 2;
+        }
 
-            <th>Status</th>
+        h2 {
+            color: #ffffff;
+            margin-bottom: 24px;
+            font-size: 24px;
+            font-weight: 600;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-            <th>Performance Time</th>
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
 
-            <th>Action</th>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
 
-            <th>Category</th>
-          </tr>
-        </thead>
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 15px;
+            vertical-align: middle;
+        }
 
-        <tbody>
-          {% for participation in participations %}
+        th {
+            background-color: rgba(45, 55, 72, 0.5);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-          <tr>
-            <td>
-              {% if participation.category_id %} {{
-              participation.category.category_name }} {% else %} General Event
-              {% endif %}
-            </td>
-            <td>{{ participation.event_id }}</td>
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
 
-            <td>{{ participation.status }}</td>
+        tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
 
-            <td>
-              {% if participation.performance_time %} {{
-              participation.performance_time }} {% else %} Pending Assignment {%
-              endif %}
-            </td>
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
 
-            <td>
-              <a
-                href="{{ url_for('user.rate_organizer', event_id=participation.event_id) }}"
-                class="btn btn-warning btn-sm"
-              >
-                Rate Organizer
-              </a>
+        .badge-general {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-              <br /><br />
+        .text-muted {
+            color: #a0aec0;
+            font-style: italic;
+            font-size: 14px;
+        }
 
-              <a
-                href="{{ url_for('user.report_organizer', event_id=participation.event_id) }}"
-                class="btn btn-danger btn-sm"
-              >
-                Report Organizer
-              </a>
-            </td>
-          </tr>
+        .action-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
 
-          {% endfor %}
-        </tbody>
-      </table>
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: filter 0.2s ease, transform 0.1s ease;
+            width: 100%;
+            color: #ffffff;
+        }
 
-      {% else %}
+        .btn:active {
+            transform: scale(0.98);
+        }
 
-      <div class="alert alert-warning">No participations found.</div>
+        .btn:hover {
+            filter: brightness(1.1);
+        }
 
-      {% endif %}
+        .btn-warning {
+            background: linear-gradient(135deg, #dd6b20, #975a16);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e53e3e, #9b2c2c);
+        }
+
+        .alert-warning {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="table-container">
+        <h2>My Participations</h2>
+
+        {% if participations %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Event ID</th>
+                            <th>Status</th>
+                            <th>Performance Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for participation in participations %}
+                        <tr>
+                            <td>
+                                {% if participation.category_id %} 
+                                    <strong>{{ participation.category.category_name }}</strong>
+                                {% else %} 
+                                    <span class="badge-general">General Event</span>
+                                {% endif %}
+                            </td>
+                            
+                            <td>
+                                {{ participation.event_id }}
+                            </td>
+
+                            <td style="text-transform: capitalize;">
+                                {{ participation.status }}
+                            </td>
+
+                            <td>
+                                {% if participation.performance_time %} 
+                                    {{ participation.performance_time }} 
+                                {% else %} 
+                                    <span class="text-muted">Pending Assignment</span> 
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <div class="action-cell">
+                                    <a 
+                                        href="{{ url_for('user.rate_organizer', event_id=participation.event_id) }}" 
+                                        class="btn btn-warning"
+                                    >
+                                        Rate Organizer
+                                    </a>
+                                    
+                                    <a 
+                                        href="{{ url_for('user.report_organizer', event_id=participation.event_id) }}" 
+                                        class="btn btn-danger"
+                                    >
+                                        Report Organizer
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert-warning">
+                No participations found.
+            </div>
+        {% endif %}
+        
     </div>
-  </body>
+</body>
 </html>

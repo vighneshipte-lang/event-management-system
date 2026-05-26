@@ -4,60 +4,199 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+        body {
+            background: linear-gradient(to bottom, #060b26 0%, #3b0a6b 35%, #8a2387 65%, #ffffff 100%);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.95);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .dashboard-container {
+            background: rgba(22, 22, 37, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 24px;
+            font-size: 26px;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 24px 0;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .metric-title {
+            font-size: 12px;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            transition: filter 0.2s ease, transform 0.1s ease;
+            margin-bottom: 12px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3182ce, #2b6cb0);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 480px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="container mt-5">
+    <div class="dashboard-container">
+        <h1>Admin Dashboard</h1>
+        
+        <hr>
 
-    <h1>Admin Dashboard</h1>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-title">Total Users</div>
+                <div class="metric-value">{{ total_users }}</div>
+            </div>
 
-    <hr>
+            <div class="metric-card">
+                <div class="metric-title">Total Organizers</div>
+                <div class="metric-value">{{ total_organizers }}</div>
+            </div>
 
-    <h3>Total Users: {{ total_users }}</h3>
+            <div class="metric-card">
+                <div class="metric-title">Total Events</div>
+                <div class="metric-value">{{ total_events }}</div>
+            </div>
 
-    <h3>Total Organizers: {{ total_organizers }}</h3>
+            <div class="metric-card">
+                <div class="metric-title">Pending Events</div>
+                <div class="metric-value">{{ pending_events }}</div>
+            </div>
 
-    <h3>Total Events: {{ total_events }}</h3>
+            <div class="metric-card">
+                <div class="metric-title">Total Complaints</div>
+                <div class="metric-value">{{ total_complaints }}</div>
+            </div>
 
-    <h3>Pending Events: {{ pending_events }}</h3>
+            <div class="metric-card">
+                <div class="metric-title">Total Ratings</div>
+                <div class="metric-value">{{ total_ratings }}</div>
+            </div>
+        </div>
 
-    <h3>Total Complaints: {{ total_complaints }}</h3>
+        <hr>
 
-    <h3>Total Ratings: {{ total_ratings }}</h3>
+        <a href="{{ url_for('admin.pending_events') }}" class="btn btn-primary">
+            Approve Events
+        </a>
 
-    <hr>
+        <a href="{{ url_for('admin.view_complaints') }}" class="btn btn-danger">
+            View Complaints
+        </a>
 
-    <a
-        href="{{ url_for('admin.pending_events') }}"
-        class="btn btn-primary"
-    >
-        Approve Events
-    </a>
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">
+            Logout
+        </a>
 
-    <br><br>
-
-    <a
-        href="{{ url_for('admin.view_complaints') }}"
-        class="btn btn-danger"
-    >
-        View Complaints
-    </a>
-
-    <br><br>
-
-    <a
-        href="{{ url_for('auth.logout') }}"
-        class="btn btn-secondary"
-    >
-        Logout
-    </a>
-
-</div>
+    </div>
 
 </body>
 </html>

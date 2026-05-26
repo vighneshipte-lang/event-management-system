@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Participations</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h2>My Participations</h2>
+
+      {% if participations %}
+
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Event ID</th>
+
+            <th>Status</th>
+
+            <th>Performance Time</th>
+
+            <th>Action</th>
+
+            <th>Category</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for participation in participations %}
+
+          <tr>
+            <td>
+              {% if participation.category_id %} {{
+              participation.category.category_name }} {% else %} General Event
+              {% endif %}
+            </td>
+            <td>{{ participation.event_id }}</td>
+
+            <td>{{ participation.status }}</td>
+
+            <td>
+              {% if participation.performance_time %} {{
+              participation.performance_time }} {% else %} Pending Assignment {%
+              endif %}
+            </td>
+
+            <td>
+              <a
+                href="{{ url_for('user.rate_organizer', event_id=participation.event_id) }}"
+                class="btn btn-warning btn-sm"
+              >
+                Rate Organizer
+              </a>
+
+              <br /><br />
+
+              <a
+                href="{{ url_for('user.report_organizer', event_id=participation.event_id) }}"
+                class="btn btn-danger btn-sm"
+              >
+                Report Organizer
+              </a>
+            </td>
+          </tr>
+
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {% else %}
+
+      <div class="alert alert-warning">No participations found.</div>
+
+      {% endif %}
+    </div>
+  </body>
+</html>

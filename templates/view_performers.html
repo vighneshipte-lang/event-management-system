@@ -4,69 +4,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Performers</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff; /* Strictly white */
+        }
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+        body {
+            background: linear-gradient(to bottom, #060b26 0%, #3b0a6b 35%, #8a2387 65%, #ffffff 100%);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.95);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .table-container {
+            background: rgba(22, 22, 37, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 1000px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-group {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h2 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 15px;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: rgba(45, 55, 72, 0.5);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .performer-name { font-weight: 600; color: #ffffff; }
+
+        .performance-time {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .performance-desc { color: #cbd5e0; line-height: 1.5; max-width: 300px; }
+
+        .alert-empty {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #a0aec0;
+            padding: 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            text-align: center;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container mt-5">
+    <div class="table-container">
 
-    <h2>{{ event.title }} Performers</h2>
-
-    {% if performers %}
-
-    <table class="table table-bordered">
-
-        <thead>
-
-            <tr>
-
-                <th>Performer</th>
-
-                <th>Performance</th>
-
-                <th>Time</th>
-
-                <th>Description</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            {% for performer in performers %}
-
-            <tr>
-
-                <td>{{ performer.performer_name }}</td>
-
-                <td>{{ performer.performance_title }}</td>
-
-                <td>{{ performer.performance_time }}</td>
-
-                <td>{{ performer.description }}</td>
-
-            </tr>
-
-            {% endfor %}
-
-        </tbody>
-
-    </table>
-
-    {% else %}
-
-        <div class="alert alert-warning">
-            No performers added yet.
+        <div class="header-group">
+            <h2>{{ event.title }} Performers</h2>
         </div>
 
-    {% endif %}
+        {% if performers %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Performer</th>
+                            <th>Performance</th>
+                            <th>Time</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for performer in performers %}
+                        <tr>
+                            <td class="performer-name">{{ performer.performer_name }}</td>
+                            <td><strong>{{ performer.performance_title }}</strong></td>
+                            <td>
+                                <span class="performance-time">{{ performer.performance_time }}</span>
+                            </td>
+                            <td class="performance-desc">{{ performer.description }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert-empty">
+                No performers have been added for this event yet.
+            </div>
+        {% endif %}
 
-</div>
+    </div>
 
 </body>
 </html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+</head>
+<body>
+
+<div class="container mt-5">
+
+    <h1>Admin Dashboard</h1>
+
+    <hr>
+
+    <h3>Total Users: {{ total_users }}</h3>
+
+    <h3>Total Organizers: {{ total_organizers }}</h3>
+
+    <h3>Total Events: {{ total_events }}</h3>
+
+    <h3>Pending Events: {{ pending_events }}</h3>
+
+    <h3>Total Complaints: {{ total_complaints }}</h3>
+
+    <h3>Total Ratings: {{ total_ratings }}</h3>
+
+    <hr>
+
+    <a
+        href="{{ url_for('admin.pending_events') }}"
+        class="btn btn-primary"
+    >
+        Approve Events
+    </a>
+
+    <br><br>
+
+    <a
+        href="{{ url_for('admin.view_complaints') }}"
+        class="btn btn-danger"
+    >
+        View Complaints
+    </a>
+
+    <br><br>
+
+    <a
+        href="{{ url_for('auth.logout') }}"
+        class="btn btn-secondary"
+    >
+        Logout
+    </a>
+
+</div>
+
+</body>
+</html>

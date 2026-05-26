@@ -1,31 +1,182 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Team</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
 
-{% block content %}
+        body {
+            background: linear-gradient(to bottom, #060b26 0%, #3b0a6b 35%, #8a2387 65%, #ffffff 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
 
-<h2>Create Team</h2>
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.95);
+            pointer-events: none;
+            z-index: 1;
+        }
 
-<form method="POST">
+        .form-container {
+            background: rgba(22, 22, 37, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 2;
+        }
 
-    <div class="mb-3">
+        h2 {
+            color: #ffffff;
+            margin-bottom: 24px;
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
 
-        <label>Team Name</label>
+        .mb-3 {
+            margin-bottom: 20px;
+        }
 
-        <input
-            type="text"
-            name="team_name"
-            class="form-control"
-            required
-        >
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e0;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
 
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #ffffff;
+            background-color: rgba(45, 55, 72, 0.7);
+            transition: all 0.3s ease;
+            color-scheme: dark;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #b83280;
+            box-shadow: 0 0 0 3px rgba(184, 50, 128, 0.25);
+            background-color: rgba(45, 55, 72, 0.9);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #8a2387, #e94057);
+            color: white;
+            box-shadow: 0 4px 15px rgba(233, 64, 87, 0.3);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #9d2899, #f25066);
+            box-shadow: 0 6px 20px rgba(233, 64, 87, 0.5);
+        }
+
+        .btn-success:active {
+            transform: scale(0.98);
+        }
+
+        .btn.loading {
+            background: #4a5568;
+            box-shadow: none;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .error-message {
+            color: #fc8181;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Create Team</h2>
+
+        <form method="POST" id="teamForm">
+            
+            <div class="mb-3">
+                <label for="team_name">Team Name</label>
+                <input 
+                    type="text" 
+                    id="team_name"
+                    name="team_name" 
+                    class="form-control" 
+                    placeholder="e.g., The Innovators"
+                    required
+                >
+                <div class="error-message" id="nameError">Team name cannot be blank.</div>
+            </div>
+
+            <button type="submit" class="btn btn-success" id="submitBtn">
+                Create Team
+            </button>
+            
+        </form>
     </div>
 
-    <button
-        type="submit"
-        class="btn btn-success"
-    >
-        Create Team
-    </button>
+    <script>
+        document.getElementById('teamForm').addEventListener('submit', function(e) {
+            const nameInput = document.getElementById('team_name').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+            let isValid = true;
 
-</form>
+            if (nameInput === "") {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('nameError').style.display = 'none';
+            }
 
-{% endblock %}
+            if (!isValid) {
+                e.preventDefault();
+                return;
+            }
+
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = 'Creating...';
+        });
+    </script>
+
+</body>
+</html>

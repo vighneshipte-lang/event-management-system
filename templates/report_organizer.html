@@ -4,39 +4,186 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Organizer</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff; /* Strictly white */
+        }
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+        body {
+            background: linear-gradient(to bottom, #060b26 0%, #3b0a6b 35%, #8a2387 65%, #ffffff 100%);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.95);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .form-container {
+            background: rgba(22, 22, 37, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 2;
+        }
+
+        h2 {
+            margin-bottom: 24px;
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .mb-3 { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffffff; /* Strictly white */
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #ffffff; /* Strictly white */
+            background-color: rgba(45, 55, 72, 0.7);
+            transition: all 0.3s ease;
+            color-scheme: dark;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #b83280;
+            box-shadow: 0 0 0 3px rgba(184, 50, 128, 0.25);
+            background-color: rgba(45, 55, 72, 0.9);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
+            color: #ffffff;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e53e3e, #9b2c2c);
+            box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #f56565, #c53030);
+            box-shadow: 0 6px 20px rgba(229, 62, 62, 0.5);
+        }
+
+        .btn-danger:active {
+            transform: scale(0.98);
+        }
+
+        .btn.loading {
+            background: #4a5568;
+            box-shadow: none;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .error-message {
+            color: #ffb3b3;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container mt-5">
+    <div class="form-container">
+        <h2>Report Organizer</h2>
 
-    <h2>Report Organizer</h2>
+        <form method="POST" id="reportForm">
+            
+            <div class="mb-3">
+                <label for="complaint_text">Complaint</label>
+                <textarea 
+                    id="complaint_text"
+                    name="complaint_text" 
+                    class="form-control" 
+                    placeholder="Please describe the issue in detail..."
+                    required
+                ></textarea>
+                <div class="error-message" id="complaintError">Complaint text cannot be blank.</div>
+            </div>
 
-    <form method="POST">
+            <button type="submit" class="btn btn-danger" id="submitBtn">
+                Submit Complaint
+            </button>
+            
+        </form>
+    </div>
 
-        <div class="mb-3">
+    <script>
+        document.getElementById('reportForm').addEventListener('submit', function(e) {
+            const complaintInput = document.getElementById('complaint_text').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+            let isValid = true;
 
-            <label>Complaint</label>
+            if (complaintInput === "") {
+                document.getElementById('complaintError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('complaintError').style.display = 'none';
+            }
 
-            <textarea
-                name="complaint_text"
-                class="form-control"
-                required
-            ></textarea>
+            if (!isValid) {
+                e.preventDefault();
+                return;
+            }
 
-        </div>
-
-        <button type="submit" class="btn btn-danger">
-            Submit Complaint
-        </button>
-
-    </form>
-
-</div>
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = 'Submitting...';
+        });
+    </script>
 
 </body>
 </html>

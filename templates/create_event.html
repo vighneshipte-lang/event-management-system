@@ -1,90 +1,271 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Create Event</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff; /* Strictly white font */
+        }
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div class="container mt-5">
-      <h2>Create Event</h2>
+        body {
+            background: linear-gradient(to bottom, #060b26 0%, #3b0a6b 35%, #8a2387 65%, #ffffff 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+            background-attachment: fixed;
+        }
 
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, message in messages %}
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.95);
+            pointer-events: none;
+            z-index: 1;
+        }
 
-      <div class="alert alert-{{ category }}">{{ message }}</div>
+        .form-container {
+            background: rgba(22, 22, 37, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 550px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 2;
+        }
 
-      {% endfor %} {% endif %} {% endwith %}
+        h2 {
+            margin-bottom: 24px;
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
 
-      <form method="POST">
-        <div class="mb-3">
-          <label>Event Title</label>
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(4px);
+        }
+        .alert-success { background: rgba(47, 133, 90, 0.3); border: 1px solid rgba(104, 211, 145, 0.5); }
+        .alert-danger, .alert-error { background: rgba(197, 48, 48, 0.3); border: 1px solid rgba(252, 129, 129, 0.5); }
+        .alert-warning { background: rgba(180, 83, 9, 0.3); border: 1px solid rgba(246, 224, 94, 0.5); }
+        .alert-info { background: rgba(43, 108, 176, 0.3); border: 1px solid rgba(144, 205, 244, 0.5); }
 
-          <input type="text" name="title" class="form-control" required />
-        </div>
+        .mb-3 { margin-bottom: 20px; }
 
-        <div class="mb-3">
-          <label>Description</label>
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffffff; /* Strictly white */
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
 
-          <textarea name="description" class="form-control" required></textarea>
-        </div>
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #ffffff; /* Strictly white */
+            background-color: rgba(45, 55, 72, 0.7);
+            transition: all 0.3s ease;
+            color-scheme: dark;
+        }
 
-        <div class="mb-3">
-          <label>Event Type</label>
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
 
-          <select name="event_type" class="form-control" required>
-            <option value="">Choose Type</option>
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
 
-            <option value="fixed">Fixed Event</option>
+        .form-control:focus {
+            outline: none;
+            border-color: #b83280;
+            box-shadow: 0 0 0 3px rgba(184, 50, 128, 0.25);
+            background-color: rgba(45, 55, 72, 0.9);
+        }
 
-            <option value="social">Social Event</option>
-          </select>
-        </div>
+        select.form-control option {
+            background-color: #1a202c;
+            color: #ffffff;
+        }
 
-        <div class="mb-3">
-          <label>Venue</label>
+        small {
+            display: block;
+            margin-top: 6px;
+            color: #ffffff; /* Strictly white */
+            font-size: 12px;
+        }
 
-          <input type="text" name="venue" class="form-control" required />
-        </div>
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
 
-        <div class="mb-3">
-          <label>Start Date</label>
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
+            color: #ffffff;
+        }
 
-          <input type="date" name="start_date" class="form-control" required />
-        </div>
+        .btn-success {
+            background: linear-gradient(135deg, #8a2387, #e94057);
+            box-shadow: 0 4px 15px rgba(233, 64, 87, 0.3);
+        }
 
-        <div class="mb-3">
-          <label>End Date</label>
+        .btn-success:hover {
+            background: linear-gradient(135deg, #9d2899, #f25066);
+            box-shadow: 0 6px 20px rgba(233, 64, 87, 0.5);
+        }
 
-          <input type="date" name="end_date" class="form-control" required />
-        </div>
-        <div class="mb-3">
-          <label>Start Time</label>
+        .btn-success:active {
+            transform: scale(0.98);
+        }
 
-          <input type="time" name="start_time" class="form-control" required />
-        </div>
+        .btn.loading {
+            background: #4a5568;
+            box-shadow: none;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
 
-        <div class="mb-3">
-          <label>End Time</label>
+        .error-message {
+            color: #ffb3b3;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
 
-          <input type="time" name="end_time" class="form-control" required />
-        </div>
+        @media (max-width: 500px) {
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Create Event</h2>
 
-        <div class="mb-3">
-          <label>Max Participants</label>
+        {% with messages = get_flashed_messages(with_categories=true) %} 
+            {% if messages %} 
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %} 
+            {% endif %} 
+        {% endwith %}
 
-          <input type="number" name="max_participants" class="form-control" />
+        <form method="POST" id="createEventForm">
+            
+            <div class="mb-3">
+                <label for="title">Event Title</label>
+                <input type="text" id="title" name="title" class="form-control" placeholder="e.g., Annual Tech Meetup" required />
+            </div>
 
-          <small> Leave empty for unlimited participants </small>
-        </div>
+            <div class="mb-3">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" class="form-control" placeholder="What is this event about?" required></textarea>
+            </div>
 
-        <button type="submit" class="btn btn-success">Create Event</button>
-      </form>
+            <div class="mb-3">
+                <label for="event_type">Event Type</label>
+                <select id="event_type" name="event_type" class="form-control" required>
+                    <option value="" disabled selected>Choose Type</option>
+                    <option value="fixed">Fixed Event</option>
+                    <option value="social">Social Event</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="venue">Venue</label>
+                <input type="text" id="venue" name="venue" class="form-control" placeholder="e.g., Grand Hall or Online" required />
+            </div>
+
+            <div class="form-row">
+                <div class="mb-3">
+                    <label for="start_date">Start Date</label>
+                    <input type="date" id="start_date" name="start_date" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="end_date">End Date</label>
+                    <input type="date" id="end_date" name="end_date" class="form-control" required />
+                </div>
+            </div>
+            <div class="error-message" id="dateError" style="margin-top: -15px; margin-bottom: 15px;">End Date cannot be before Start Date.</div>
+
+            <div class="form-row">
+                <div class="mb-3">
+                    <label for="start_time">Start Time</label>
+                    <input type="time" id="start_time" name="start_time" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="end_time">End Time</label>
+                    <input type="time" id="end_time" name="end_time" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="max_participants">Max Participants</label>
+                <input type="number" id="max_participants" name="max_participants" class="form-control" placeholder="e.g., 100" min="1" />
+                <small>Leave empty for unlimited participants</small>
+            </div>
+
+            <button type="submit" class="btn btn-success" id="submitBtn">Create Event</button>
+        </form>
     </div>
-  </body>
+
+    <script>
+        document.getElementById('createEventForm').addEventListener('submit', function(e) {
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            const submitBtn = document.getElementById('submitBtn');
+            let isValid = true;
+
+            if (startDate && endDate && endDate < startDate) {
+                document.getElementById('dateError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('dateError').style.display = 'none';
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                return;
+            }
+
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = 'Creating Event...';
+        });
+    </script>
+</body>
 </html>

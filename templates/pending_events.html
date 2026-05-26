@@ -1,69 +1,220 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Events</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff; /* Strictly white */
+        }
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div class="container mt-5">
-      <h2>Pending Events</h2>
+        body {
+            background: linear-gradient(to bottom, #060b26 0%, #3b0a6b 35%, #8a2387 65%, #ffffff 100%);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            min-height: 100vh;
+            position: relative;
+        }
 
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, message in messages %}
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.95);
+            pointer-events: none;
+            z-index: 1;
+        }
 
-      <div class="alert alert-{{ category }}">{{ message }}</div>
+        .table-container {
+            background: rgba(22, 22, 37, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 1000px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 2;
+        }
 
-      {% endfor %} {% endif %} {% endwith %}
+        h2 {
+            color: #ffffff;
+            margin-bottom: 24px;
+            font-size: 24px;
+            font-weight: 600;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Type</th>
-            <th>Venue</th>
-            <th>Date</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(4px);
+        }
+        .alert-success { background: rgba(47, 133, 90, 0.3); border: 1px solid rgba(104, 211, 145, 0.5); }
+        .alert-danger, .alert-error { background: rgba(197, 48, 48, 0.3); border: 1px solid rgba(252, 129, 129, 0.5); }
+        .alert-warning { background: rgba(180, 83, 9, 0.3); border: 1px solid rgba(246, 224, 94, 0.5); }
+        .alert-info { background: rgba(43, 108, 176, 0.3); border: 1px solid rgba(144, 205, 244, 0.5); }
 
-        <tbody>
-          {% for event in events %}
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
 
-          <tr>
-            <td>{{ event.title }}</td>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
 
-            <td>{{ event.event_type }}</td>
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 15px;
+            vertical-align: middle;
+        }
 
-            <td>{{ event.venue }}</td>
+        th {
+            background-color: rgba(45, 55, 72, 0.5);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-            <td><p>{{ event.start_date }} to {{ event.end_date }}</p></td>
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
 
-            <td>
-              <a
-                href="{{ url_for('admin.approve_event', event_id=event.id) }}"
-                class="btn btn-success btn-sm"
-              >
-                Approve
-              </a>
+        tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
 
-              <a
-                href="{{ url_for('admin.reject_event', event_id=event.id) }}"
-                class="btn btn-danger btn-sm"
-              >
-                Reject
-              </a>
-            </td>
-          </tr>
+        .event-type {
+            text-transform: capitalize;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+        }
 
-          {% endfor %}
-        </tbody>
-      </table>
+        .date-range {
+            color: #cbd5e0;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: filter 0.2s ease, transform 0.1s ease;
+            color: white;
+        }
+
+        .btn:active { transform: scale(0.98); }
+        .btn:hover { filter: brightness(1.1); }
+
+        .btn-success { background: linear-gradient(135deg, #38a169, #2f855a); }
+        .btn-danger { background: linear-gradient(135deg, #e53e3e, #9b2c2c); }
+
+        .alert-empty {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #a0aec0;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="table-container">
+        
+        <h2>Pending Events</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %} 
+            {% if messages %} 
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %} 
+            {% endif %} 
+        {% endwith %}
+
+        {% if events %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>Venue</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr>
+                            <td><strong>{{ event.title }}</strong></td>
+                            
+                            <td>
+                                <span class="event-type">{{ event.event_type }}</span>
+                            </td>
+                            
+                            <td>{{ event.venue }}</td>
+                            
+                            <td>
+                                <span class="date-range">{{ event.start_date }} to {{ event.end_date }}</span>
+                            </td>
+                            
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('admin.approve_event', event_id=event.id) }}" class="btn btn-success">Approve</a>
+                                    <a href="{{ url_for('admin.reject_event', event_id=event.id) }}" class="btn btn-danger">Reject</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert-empty">
+                There are no pending events to review at this time.
+            </div>
+        {% endif %}
+
     </div>
-  </body>
+</body>
 </html>

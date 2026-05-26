@@ -1,0 +1,124 @@
+<h1>Organizer Dashboard</h1>
+
+<br>
+
+<a href="{{ url_for('auth.profile') }}">
+    My Profile
+</a>
+
+<br><br>
+
+<h3>Total Events: {{ total_events }}</h3>
+
+<h3>Total Participants: {{ total_participants }}</h3>
+
+<h3>Total Performers: {{ total_performers }}</h3>
+
+<h3>Total Expenses: ₹ {{ total_expenses }}</h3>
+
+<hr>
+
+<a href="{{ url_for('organizer.create_event') }}">
+    Create Event
+</a>
+
+<br><br>
+
+{% for event in current_user.events %}
+
+<div>
+
+    <strong>{{ event.title }}</strong>
+
+    <br><br>
+
+    <p>
+        {{ event.start_date }}
+        to
+        {{ event.end_date }}
+    </p>
+
+    <br>
+
+    <a href="{{ url_for('organizer.edit_event', event_id=event.id) }}">
+        Edit Event
+    </a>
+
+    <br><br>
+
+    <a
+        href="{{ url_for('organizer.delete_event', event_id=event.id) }}"
+        onclick="return confirm('Are you sure you want to delete this event?');"
+    >
+        Delete Event
+    </a>
+
+    <br><br>
+
+    <a href="{{ url_for('organizer.add_notification', event_id=event.id) }}">
+        Send Notification
+    </a>
+
+    <br><br>
+
+    <a href="{{ url_for('organizer.add_category', event_id=event.id) }}">
+        Add Category
+    </a>
+
+    <br><br>
+
+    <a href="{{ url_for('organizer.add_schedule', event_id=event.id) }}">
+        Add Schedule
+    </a>
+
+    <br><br>
+
+    {% if event.event_type == 'social' %}
+
+        <a href="{{ url_for('organizer.event_participants', event_id=event.id) }}">
+            Manage Participants
+        </a>
+
+        <br><br>
+
+    {% endif %}
+
+    <a href="{{ url_for('organizer.add_expense', event_id=event.id) }}">
+        Add Expense
+    </a>
+
+    <br><br>
+
+    <a href="{{ url_for('organizer.view_expenses', event_id=event.id) }}">
+        View Expenses
+    </a>
+
+    <br><br>
+
+    {% if event.event_type == 'fixed' %}
+
+        <a href="{{ url_for('organizer.add_performer', event_id=event.id) }}">
+            Add Performer
+        </a>
+
+        <br><br>
+
+        <a href="{{ url_for('organizer.view_performers', event_id=event.id) }}">
+            View Performers
+        </a>
+
+        <br><br>
+
+    {% endif %}
+
+</div>
+
+<hr>
+
+{% endfor %}
+
+<br>
+
+<a href="{{ url_for('auth.logout') }}">
+    Logout
+</a>

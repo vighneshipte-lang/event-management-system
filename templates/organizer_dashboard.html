@@ -1,124 +1,233 @@
-<h1>Organizer Dashboard</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizer Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff; /* Strictly white */
+        }
 
-<br>
+        body {
+            background: linear-gradient(to bottom, #060b26 0%, #3b0a6b 35%, #8a2387 65%, #ffffff 100%);
+            background-attachment: fixed;
+            padding: 40px 20px;
+            min-height: 100vh;
+            position: relative;
+        }
 
-<a href="{{ url_for('auth.profile') }}">
-    My Profile
-</a>
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.95);
+            pointer-events: none;
+            z-index: 1;
+        }
 
-<br><br>
+        .dashboard-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
 
-<h3>Total Events: {{ total_events }}</h3>
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
 
-<h3>Total Participants: {{ total_participants }}</h3>
+        .dashboard-header h1 {
+            font-size: 28px;
+            color: #ffffff;
+            font-weight: 700;
+        }
 
-<h3>Total Performers: {{ total_performers }}</h3>
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
 
-<h3>Total Expenses: ₹ {{ total_expenses }}</h3>
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
 
-<hr>
+        .metric-card {
+            background: rgba(22, 22, 37, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
 
-<a href="{{ url_for('organizer.create_event') }}">
-    Create Event
-</a>
+        .metric-title {
+            font-size: 13px;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
 
-<br><br>
+        .metric-value {
+            font-size: 28px;
+            color: #ffffff;
+            font-weight: 700;
+        }
 
-{% for event in current_user.events %}
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-<div>
+        .section-header h2 {
+            font-size: 22px;
+            color: #ffffff;
+        }
 
-    <strong>{{ event.title }}</strong>
+        .event-card {
+            background: rgba(22, 22, 37, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: background 0.2s ease;
+        }
 
-    <br><br>
+        .event-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
 
-    <p>
-        {{ event.start_date }}
-        to
-        {{ event.end_date }}
-    </p>
+        .event-card-header h3 {
+            font-size: 20px;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
 
-    <br>
+        .event-dates {
+            font-size: 14px;
+            color: #a0aec0;
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
 
-    <a href="{{ url_for('organizer.edit_event', event_id=event.id) }}">
-        Edit Event
-    </a>
+        .event-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
 
-    <br><br>
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: filter 0.2s ease, transform 0.1s ease;
+            color: #ffffff;
+        }
 
-    <a
-        href="{{ url_for('organizer.delete_event', event_id=event.id) }}"
-        onclick="return confirm('Are you sure you want to delete this event?');"
-    >
-        Delete Event
-    </a>
+        .btn:active { transform: scale(0.98); }
+        .btn:hover { filter: brightness(1.1); }
 
-    <br><br>
+        .btn-primary { background: linear-gradient(135deg, #3182ce, #2b6cb0); }
+        .btn-success { background: linear-gradient(135deg, #8a2387, #e94057); }
+        .btn-danger { background: linear-gradient(135deg, #e53e3e, #9b2c2c); }
+        .btn-secondary { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .btn-outline { background: transparent; border: 1px solid #3182ce; color: #63b3ed; }
+        .btn-sm { padding: 8px 12px; font-size: 13px; }
+    </style>
+</head>
+<body>
 
-    <a href="{{ url_for('organizer.add_notification', event_id=event.id) }}">
-        Send Notification
-    </a>
+    <div class="dashboard-container">
+        
+        <div class="dashboard-header">
+            <h1>Organizer Dashboard</h1>
+            <div class="header-actions">
+                <a href="{{ url_for('auth.profile') }}" class="btn btn-outline">My Profile</a>
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">Logout</a>
+            </div>
+        </div>
 
-    <br><br>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-title">Total Events</div>
+                <div class="metric-value">{{ total_events }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Total Participants</div>
+                <div class="metric-value">{{ total_participants }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Total Performers</div>
+                <div class="metric-value">{{ total_performers }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Total Expenses</div>
+                <div class="metric-value">₹ {{ total_expenses }}</div>
+            </div>
+        </div>
 
-    <a href="{{ url_for('organizer.add_category', event_id=event.id) }}">
-        Add Category
-    </a>
+        <div class="section-header">
+            <h2>My Events</h2>
+            <a href="{{ url_for('organizer.create_event') }}" class="btn btn-success">
+                + Create Event
+            </a>
+        </div>
 
-    <br><br>
+        {% for event in current_user.events %}
+        <div class="event-card">
+            <div class="event-card-header">
+                <h3>{{ event.title }}</h3>
+                <div class="event-dates">📅 {{ event.start_date }} to {{ event.end_date }}</div>
+            </div>
 
-    <a href="{{ url_for('organizer.add_schedule', event_id=event.id) }}">
-        Add Schedule
-    </a>
+            <div class="event-actions">
+                <a href="{{ url_for('organizer.edit_event', event_id=event.id) }}" class="btn btn-sm btn-primary">Edit Event</a>
+                <a href="{{ url_for('organizer.add_notification', event_id=event.id) }}" class="btn btn-sm btn-secondary">Send Notification</a>
+                <a href="{{ url_for('organizer.add_category', event_id=event.id) }}" class="btn btn-sm btn-secondary">Add Category</a>
+                <a href="{{ url_for('organizer.add_schedule', event_id=event.id) }}" class="btn btn-sm btn-secondary">Add Schedule</a>
+                {% if event.event_type == 'social' %}
+                    <a href="{{ url_for('organizer.event_participants', event_id=event.id) }}" class="btn btn-sm btn-outline">Manage Participants</a>
+                {% endif %}
+                <a href="{{ url_for('organizer.add_expense', event_id=event.id) }}" class="btn btn-sm btn-secondary">Add Expense</a>
+                <a href="{{ url_for('organizer.view_expenses', event_id=event.id) }}" class="btn btn-sm btn-outline">View Expenses</a>
+                {% if event.event_type == 'fixed' %}
+                    <a href="{{ url_for('organizer.add_performer', event_id=event.id) }}" class="btn btn-sm btn-secondary">Add Performer</a>
+                    <a href="{{ url_for('organizer.view_performers', event_id=event.id) }}" class="btn btn-sm btn-outline">View Performers</a>
+                {% endif %}
+                <a href="{{ url_for('organizer.delete_event', event_id=event.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?');">Delete Event</a>
+            </div>
+        </div>
+        {% endfor %}
 
-    <br><br>
+    </div>
 
-    {% if event.event_type == 'social' %}
-
-        <a href="{{ url_for('organizer.event_participants', event_id=event.id) }}">
-            Manage Participants
-        </a>
-
-        <br><br>
-
-    {% endif %}
-
-    <a href="{{ url_for('organizer.add_expense', event_id=event.id) }}">
-        Add Expense
-    </a>
-
-    <br><br>
-
-    <a href="{{ url_for('organizer.view_expenses', event_id=event.id) }}">
-        View Expenses
-    </a>
-
-    <br><br>
-
-    {% if event.event_type == 'fixed' %}
-
-        <a href="{{ url_for('organizer.add_performer', event_id=event.id) }}">
-            Add Performer
-        </a>
-
-        <br><br>
-
-        <a href="{{ url_for('organizer.view_performers', event_id=event.id) }}">
-            View Performers
-        </a>
-
-        <br><br>
-
-    {% endif %}
-
-</div>
-
-<hr>
-
-{% endfor %}
-
-<br>
-
-<a href="{{ url_for('auth.logout') }}">
-    Logout
-</a>
+</body>
+</html>

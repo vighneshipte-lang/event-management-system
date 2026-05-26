@@ -1,51 +1,212 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Event Management System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff;
+        }
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div class="container mt-5">
-      <h2 class="mb-4">User Login</h2>
+        body {
+            background: linear-gradient(to bottom, #060b26 0%, #3b0a6b 35%, #8a2387 65%, #ffffff 100%);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
 
-      <!-- Flash Messages -->
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, message in messages %}
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.95);
+            pointer-events: none;
+            z-index: 1;
+        }
 
-      <div class="alert alert-{{ category }}">{{ message }}</div>
+        .form-container {
+            background: rgba(22, 22, 37, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 2;
+        }
 
-      {% endfor %} {% endif %} {% endwith %}
+        h2 {
+            margin-bottom: 24px;
+            font-size: 26px;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
 
-      <form method="POST">
-        <div class="mb-3">
-          <label>Email</label>
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            backdrop-filter: blur(4px);
+        }
+        .alert-success { background: rgba(47, 133, 90, 0.3); border: 1px solid rgba(104, 211, 145, 0.5); }
+        .alert-danger, .alert-error { background: rgba(197, 48, 48, 0.3); border: 1px solid rgba(252, 129, 129, 0.5); }
+        .alert-warning { background: rgba(180, 83, 9, 0.3); border: 1px solid rgba(246, 224, 94, 0.5); }
+        .alert-info { background: rgba(43, 108, 176, 0.3); border: 1px solid rgba(144, 205, 244, 0.5); }
 
-          <input type="email" name="email" class="form-control" required />
-        </div>
+        .mb-3 { margin-bottom: 20px; }
 
-        <div class="mb-3">
-          <label>Password</label>
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
 
-          <input
-            type="password"
-            name="password"
-            class="form-control"
-            required
-          />
-        </div>
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #ffffff;
+            background-color: rgba(45, 55, 72, 0.7);
+            transition: all 0.3s ease;
+            color-scheme: dark;
+        }
 
-        <button type="submit" class="btn btn-primary">Login</button>
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
 
-        <div class="mt-3">
-          <a href="{{ url_for('auth.forgot_password') }}"> Forgot Password? </a>
-        </div>
-      </form>
+        .form-control:focus {
+            outline: none;
+            border-color: #b83280;
+            box-shadow: 0 0 0 3px rgba(184, 50, 128, 0.25);
+            background-color: rgba(45, 55, 72, 0.9);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
+            color: #ffffff;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3182ce, #2b6cb0);
+            box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            box-shadow: 0 6px 20px rgba(49, 130, 206, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn.loading {
+            background: #4a5568;
+            box-shadow: none;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .helper-links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .helper-links a {
+            color: #ffffff;
+            text-decoration: underline;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .helper-links a:hover {
+            color: #b83280;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>User Login</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %} 
+            {% if messages %} 
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %} 
+            {% endif %} 
+        {% endwith %}
+
+        <form method="POST" id="loginForm">
+            
+            <div class="mb-3">
+                <label for="email">Email</label>
+                <input 
+                    type="email" 
+                    id="email"
+                    name="email" 
+                    class="form-control" 
+                    placeholder="Enter your email"
+                    required 
+                />
+            </div>
+
+            <div class="mb-3">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password"
+                    name="password" 
+                    class="form-control" 
+                    placeholder="Enter your password"
+                    required 
+                />
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">Login</button>
+
+            <div class="helper-links">
+                <a href="{{ url_for('auth.forgot_password') }}">Forgot Password?</a>
+            </div>
+
+        </form>
     </div>
-  </body>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function() {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = 'Logging in...';
+        });
+    </script>
+</body>
 </html>

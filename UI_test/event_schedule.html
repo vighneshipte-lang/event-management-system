@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>{{ event.title }} Schedule</h2>
+
+{% if schedules %}
+
+<table class="table table-bordered">
+
+    <thead>
+
+        <tr>
+
+            <th>Participant</th>
+
+            <th>Category</th>
+
+            <th>Stage</th>
+
+            <th>Day</th>
+
+            <th>Time</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for schedule in schedules %}
+
+        <tr>
+
+            <td>
+                {{ schedule.participant_name }}
+            </td>
+
+            <td>
+
+                {% if schedule.category_id %}
+
+                    {{ schedule.category.category_name }}
+
+                {% else %}
+
+                    General
+
+                {% endif %}
+
+            </td>
+
+            <td>
+                {{ schedule.stage_name }}
+            </td>
+
+            <td>
+                {{ schedule.event_day }}
+            </td>
+
+            <td>
+                {{ schedule.start_time }}
+                -
+                {{ schedule.end_time }}
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% else %}
+
+<div class="alert alert-warning">
+
+    No schedule available.
+
+</div>
+
+{% endif %}
+
+{% endblock %}
