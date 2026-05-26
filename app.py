@@ -17,7 +17,6 @@ from models.event_category_model import EventCategory
 from models.team_model import Team
 from models.schedule_model import Schedule
 
-
 app = Flask(__name__)
 app.config.from_object(Config)
 
@@ -29,13 +28,14 @@ login_manager = LoginManager()
 
 login_manager.init_app(app)
 
-login_manager.login_view = 'auth.login'
+login_manager.login_view = "auth.login"
 
 # Register blueprint
 app.register_blueprint(auth)
 app.register_blueprint(admin)
 app.register_blueprint(organizer)
 app.register_blueprint(user)
+
 
 # Load logged-in user
 @login_manager.user_loader
@@ -44,14 +44,14 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-@app.route('/')
+@app.route("/")
 def home():
-    return render_template('index.html')
+    return render_template("index.html")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     with app.app_context():
         db.create_all()
 
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
