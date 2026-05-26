@@ -16,6 +16,7 @@ from models.notification_model import Notification
 from models.event_category_model import EventCategory
 from models.team_model import Team
 from models.schedule_model import Schedule
+from pyngrok import ngrok
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -54,4 +55,7 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
+    public_url = ngrok.connect(5000)
+
+    print("Public URL:", public_url)
     app.run(host="0.0.0.0", port=5000, debug=True)

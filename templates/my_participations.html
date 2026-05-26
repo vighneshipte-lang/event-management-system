@@ -216,7 +216,7 @@
                                     </a>
                                     
                                     <a 
-                                        href="{{ url_for('user.report_organizer', event_id=participation.event_id) }}" 
+                                        href="{{ url_for('user.report_organizer', organizer_id=participation.event.organizer_id) }}"
                                         class="btn btn-danger"
                                     >
                                         Report Organizer
