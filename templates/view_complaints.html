@@ -3,160 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complaints</title>
+    <title>Organizer Complaints</title>
+
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: #ffffff; /* Strictly white */
+
+        *{
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
+            font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+            color:#ffffff;
         }
 
-        body {
-            background: linear-gradient(to bottom, #060b26 0%, #3b0a6b 35%, #8a2387 65%, #ffffff 100%);
-            background-attachment: fixed;
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-            min-height: 100vh;
-            position: relative;
+        body{
+            background:linear-gradient(
+                to bottom,
+                #060b26 0%,
+                #3b0a6b 35%,
+                #8a2387 65%,
+                #ffffff 100%
+            );
+
+            background-attachment:fixed;
+
+            display:flex;
+            justify-content:center;
+
+            padding:40px 20px;
+
+            min-height:100vh;
+
+            position:relative;
         }
 
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.95);
-            pointer-events: none;
-            z-index: 1;
+        body::after{
+            content:"";
+            position:fixed;
+            top:0;
+            left:0;
+            right:0;
+            bottom:0;
+
+            box-shadow:inset 0 0 180px rgba(0,0,0,0.95);
+
+            pointer-events:none;
+
+            z-index:1;
         }
 
-        .table-container {
-            background: rgba(22, 22, 37, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: 30px 40px;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            width: 100%;
-            max-width: 1000px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            position: relative;
-            z-index: 2;
+        .table-container{
+            background:rgba(22,22,37,0.85);
+
+            backdrop-filter:blur(12px);
+            -webkit-backdrop-filter:blur(12px);
+
+            padding:30px 40px;
+
+            border-radius:16px;
+
+            box-shadow:0 20px 40px rgba(0,0,0,0.4);
+
+            width:100%;
+
+            max-width:1400px;
+
+            border:1px solid rgba(255,255,255,0.08);
+
+            position:relative;
+
+            z-index:2;
         }
 
-        h2 {
-            color: #ffffff;
-            margin-bottom: 24px;
-            font-size: 24px;
-            font-weight: 600;
-            padding-bottom: 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        h2{
+            color:#ffffff;
+
+            margin-bottom:24px;
+
+            font-size:24px;
+
+            font-weight:600;
+
+            padding-bottom:16px;
+
+            border-bottom:1px solid rgba(255,255,255,0.1);
         }
 
-        .table-responsive {
-            overflow-x: auto;
-            width: 100%;
+        .table-responsive{
+            overflow-x:auto;
+            width:100%;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:10px;
         }
 
-        th, td {
-            padding: 16px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            font-size: 15px;
-            vertical-align: middle;
+        th,
+        td{
+            padding:16px;
+
+            text-align:left;
+
+            border-bottom:1px solid rgba(255,255,255,0.1);
+
+            color:#ffffff;
+
+            font-size:15px;
+
+            vertical-align:middle;
         }
 
-        th {
-            background-color: rgba(45, 55, 72, 0.5);
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        th{
+            background-color:rgba(45,55,72,0.5);
+
+            font-weight:600;
+
+            font-size:13px;
+
+            text-transform:uppercase;
+
+            letter-spacing:0.5px;
         }
 
-        tbody tr {
-            transition: background-color 0.2s ease;
+        tbody tr{
+            transition:background-color 0.2s ease;
         }
 
-        tbody tr:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+        tbody tr:hover{
+            background-color:rgba(255,255,255,0.05);
         }
 
-        .status-text {
-            text-transform: capitalize;
-            font-weight: 600;
-            color: #ffffff;
+        .status-text{
+            text-transform:capitalize;
+            font-weight:600;
         }
 
-        .complaint-text {
-            max-width: 300px;
-            line-height: 1.5;
-            color: #cbd5e0;
+        .complaint-text{
+            max-width:350px;
+            line-height:1.5;
+            color:#cbd5e0;
         }
 
-        .alert-empty {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: #a0aec0;
-            padding: 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            text-align: center;
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-            margin-top: 10px;
-            font-style: italic;
+        .alert-empty{
+            background-color:rgba(255,255,255,0.05);
+
+            color:#a0aec0;
+
+            padding:20px;
+
+            border-radius:8px;
+
+            font-size:14px;
+
+            text-align:center;
+
+            border:1px dashed rgba(255,255,255,0.2);
+
+            margin-top:10px;
+
+            font-style:italic;
         }
+
+        .action-cell{
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+        }
+
+        .btn{
+            display:inline-block;
+
+            padding:8px 14px;
+
+            border-radius:6px;
+
+            text-decoration:none;
+
+            color:white;
+
+            font-size:13px;
+
+            font-weight:600;
+
+            transition:0.2s;
+        }
+
+        .btn:hover{
+            filter:brightness(1.1);
+        }
+
+        .btn-warning{
+            background:linear-gradient(
+                135deg,
+                #f59e0b,
+                #d97706
+            );
+        }
+
+        .btn-danger{
+            background:linear-gradient(
+                135deg,
+                #ef4444,
+                #dc2626
+            );
+        }
+
+        .resolved{
+            color:#10b981;
+            font-weight:600;
+        }
+
     </style>
+
 </head>
+
 <body>
 
-    <div class="table-container">
+<div class="table-container">
 
-        <h2>Organizer Complaints</h2>
+    <h2>Organizer Complaints</h2>
 
-        {% if complaints %}
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>User ID</th>
-                            <th>Organizer ID</th>
-                            <th>Event ID</th>
-                            <th>Complaint</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for complaint in complaints %}
-                        <tr>
-                            <td>{{ complaint.user_id }}</td>
-                            <td>{{ complaint.organizer_id }}</td>
-                            <td>{{ complaint.event_id }}</td>
-                            <td class="complaint-text">{{ complaint.complaint_text }}</td>
-                            <td>
-                                <span class="status-text">{{ complaint.status }}</span>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% else %}
-            <div class="alert-empty">
-                No complaints have been filed.
-            </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category,message in messages %}
+                <div style="
+                    background:rgba(255,255,255,0.08);
+                    padding:12px;
+                    border-radius:8px;
+                    margin-bottom:15px;
+                ">
+                    {{ message }}
+                </div>
+            {% endfor %}
         {% endif %}
+    {% endwith %}
+
+    {% if complaints %}
+
+    <div class="table-responsive">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Organizer Name</th>
+
+                    <th>Organizer Email</th>
+
+                    <th>Event Name</th>
+
+                    <th>Reported By</th>
+
+                    <th>Complaint</th>
+
+                    <th>Status</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for complaint in complaints %}
+
+                <tr>
+
+                    <td>
+                        {{ complaint.organizer.full_name }}
+                    </td>
+
+                    <td>
+                        {{ complaint.organizer.email }}
+                    </td>
+
+                    <td>
+                        {{ complaint.event.title }}
+                    </td>
+
+                    <td>
+                        {{ complaint.user.full_name }}
+                    </td>
+
+                    <td class="complaint-text">
+                        {{ complaint.complaint_text }}
+                    </td>
+
+                    <td>
+                        <span class="status-text">
+                            {{ complaint.status }}
+                        </span>
+                    </td>
+
+                    <td>
+
+                        {% if complaint.status != 'resolved' %}
+
+                        <div class="action-cell">
+
+                            <a
+                                href="{{ url_for('admin.lower_rating', organizer_id=complaint.organizer_id) }}"
+                                class="btn btn-warning"
+                                onclick="return confirm('Reduce organizer rating to 1 star?')"
+                            >
+                                Lower Rating
+                            </a>
+
+                            <a
+                                href="{{ url_for('admin.ban_organizer', organizer_id=complaint.organizer_id) }}"
+                                class="btn btn-danger"
+                                onclick="return confirm('Ban this organizer?')"
+                            >
+                                Ban Organizer
+                            </a>
+
+                        </div>
+
+                        {% else %}
+
+                        <span class="resolved">
+                            Action Taken
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
 
     </div>
+
+    {% else %}
+
+    <div class="alert-empty">
+        No complaints have been filed.
+    </div>
+
+    {% endif %}
+
+</div>
 
 </body>
 </html>

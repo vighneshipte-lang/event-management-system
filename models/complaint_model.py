@@ -39,3 +39,20 @@ class Complaint(db.Model):
         db.DateTime,
         server_default=db.func.now()
     )
+
+    # Relationships
+
+    user = db.relationship(
+        'User',
+        foreign_keys=[user_id]
+    )
+
+    organizer = db.relationship(
+        'User',
+        foreign_keys=[organizer_id]
+    )
+
+    event = db.relationship(
+        'Event',
+        foreign_keys=[event_id]
+    )

@@ -26,7 +26,10 @@
         body::after {
             content: "";
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.95);
             pointer-events: none;
             z-index: 1;
@@ -40,7 +43,7 @@
             border-radius: 16px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
             border: 1px solid rgba(255, 255, 255, 0.08);
             position: relative;
             z-index: 2;
@@ -126,6 +129,10 @@
             background: linear-gradient(135deg, #3182ce, #2b6cb0);
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+        }
+
         .btn-danger {
             background: linear-gradient(135deg, #e53e3e, #c53030);
         }
@@ -146,11 +153,13 @@
 <body>
 
     <div class="dashboard-container">
+
         <h1>Admin Dashboard</h1>
-        
+
         <hr>
 
         <div class="metrics-grid">
+
             <div class="metric-card">
                 <div class="metric-title">Total Users</div>
                 <div class="metric-value">{{ total_users }}</div>
@@ -159,6 +168,11 @@
             <div class="metric-card">
                 <div class="metric-title">Total Organizers</div>
                 <div class="metric-value">{{ total_organizers }}</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-title">Pending Organizers</div>
+                <div class="metric-value">{{ pending_organizers }}</div>
             </div>
 
             <div class="metric-card">
@@ -180,9 +194,14 @@
                 <div class="metric-title">Total Ratings</div>
                 <div class="metric-value">{{ total_ratings }}</div>
             </div>
+
         </div>
 
         <hr>
+
+        <a href="{{ url_for('admin.pending_organizers') }}" class="btn btn-success">
+            Approve Organizers
+        </a>
 
         <a href="{{ url_for('admin.pending_events') }}" class="btn btn-primary">
             Approve Events
